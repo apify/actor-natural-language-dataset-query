@@ -14,3 +14,8 @@ export type TypeShape = ValueType | { [key: string]: TypeShape };
 export type DatasetItem = Record<string, unknown>;
 
 export type TableShape = { [key: string]: SqliteType };
+
+export interface ActorContext {
+    name: string;
+    description: string;
+}

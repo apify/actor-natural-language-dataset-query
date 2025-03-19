@@ -2,7 +2,15 @@ import { ApifyClient } from 'apify';
 import { getObjectKeyPath, isNumberFloat } from './utils';
 import type { DatasetItem, TypeShape, ValueType } from './types';
 
-export async function getApifyDataset(id: string): Promise<DatasetItem[]> {
+export async function getApifyDataset(id: string): Promise<unknown> {
+    const apifyClient = new ApifyClient({
+        token: process.env.APIFY_TOKEN,
+    });
+
+    return await apifyClient.dataset(id).get();
+}
+
+export async function getApifyDatasetItems(id: string): Promise<DatasetItem[]> {
     const apifyClient = new ApifyClient({
         token: process.env.APIFY_TOKEN,
     });
