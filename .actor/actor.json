@@ -1,0 +1,11 @@
+{
+    "actorSpecification": 1,
+    "name": "tiny-query-engine",
+    "version": "0.0",
+    "buildTag": "latest",
+    "storages": {
+        "dataset": "./dataset_schema.json"
+    },
+    "input": "./input_schema.json",
+    "dockerfile": "./Dockerfile"
+}
