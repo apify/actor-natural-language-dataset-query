@@ -13,7 +13,12 @@ import {
     populateDatabase,
 } from './engine';
 import { TABLE_NAME } from './const';
-import { queryLLM } from './llm';
+import {
+    queryLLM,
+    queryLLMGetReport,
+    queryLLMGetSQL,
+    queryLLMIsQuerySane,
+} from './llm';
 import { getActorContext } from './actors';
 
 async function main() {
@@ -40,23 +45,17 @@ async function main() {
     initializeDatabase(db, TABLE_NAME, tableShape);
     populateDatabase(db, TABLE_NAME, tableShape, datasetItems);
 
-    //const query = db.query(`SELECT * FROM ${TABLE_NAME}`);
-    //for (const row of query.all()) {
-    //    console.log(row);
-    //}
-
     const actorContext = await getActorContext(dataset.actId);
 
-    const sql = await queryLLM({
-        instructions:
-            'You are a SQLite3-only expert data analyst providing helpful and functional database queries. Always follow best querying practices like wrapping column names in double quotes, and table names in single quotes and aliasing where it makes sense like COUNT(*), which should always be aliased to be readable. RETURN ONLY THE RAW SQL QUERY STRING WITHOUT ANY MARKDOWN JUST RAW TEXT NOTHING ELSE.',
-        query: `Provide SQL query for the following user prompt: ${input.query}
-        Table name: ${TABLE_NAME}
-        Table schema: ${JSON.stringify(tableShape)}
-        Output in the database is from this Apify Actor.
-        Actor name: ${actorContext.name}
-        Actor description: ${actorContext.description}`,
-    });
+    const { isSane: isQuerySane, reason: saneReason } =
+        await queryLLMIsQuerySane(input.query, tableShape, actorContext);
+    if (!isQuerySane) {
+        log.error(`User query is not sane: ${saneReason} I am quitting...`);
+        await Actor.exit({ statusMessage: 'User query is not sane' });
+        return;
+    }
+
+    const sql = await queryLLMGetSQL(input.query, tableShape, actorContext);
     console.log(sql);
 
     const userQuery = db.query(sql);
@@ -65,17 +64,11 @@ async function main() {
         console.log(row);
     }
 
-    const response = await queryLLM({
-        instructions: `You are an expert report writer for data analysis results. You are given a query from your boss, data results from an expert analyst, and write a report to answer the boss's query. Keep it simple and to the point. Your boss is technical and does not like bluffing or boilerplate. Keep it raw and simple. Do not use markdown unless tasked otherwise and keep it as a simple response to the query. For example, for the query "What is the number of failed user logins in the last month" respond "The total number of failed user logins in the last month is 3" unless asked otherwise.`,
-        query: `Write a report to answer the following query:
-        ${input.query}
-        Reply in the context of this Apify Actor, data are from this Actor run.
-        Actor name: ${actorContext.name}
-        Actor description: ${actorContext.description}
-        ---
-        Data:
-        ${JSON.stringify(userQueryResult)}`,
-    });
+    const response = await queryLLMGetReport(
+        input.query,
+        userQueryResult,
+        actorContext,
+    );
     console.log(response);
 
     await Actor.pushData({

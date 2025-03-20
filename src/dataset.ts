@@ -66,7 +66,6 @@ export function getDatasetTypeShape(
     obj: DatasetItem[],
     rootKey = '',
 ): TypeShape {
-    console.log('rootKey', rootKey);
     const typeShape: TypeShape = {};
     const typeCandidates: Record<string, Set<string>> = {};
 
