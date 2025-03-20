@@ -19,3 +19,9 @@ export interface ActorContext {
     name: string;
     description: string;
 }
+
+export interface QueryLLMResponse {
+    text: string;
+    inputTokens: number;
+    outputTokens: number;
+}
