@@ -1,5 +1,4 @@
-import { Actor, log } from 'apify';
-import { Database } from 'bun:sqlite';
+import { Actor, log, LogLevel } from 'apify';
 import { handleInput } from './input';
 import {
     getApifyDataset,
@@ -13,12 +12,7 @@ import {
     populateDatabase,
 } from './engine';
 import { TABLE_NAME } from './const';
-import {
-    queryLLM,
-    queryLLMGetReport,
-    queryLLMGetSQL,
-    queryLLMIsQuerySane,
-} from './llm';
+import { queryLLMGetReport, queryLLMGetSQL, queryLLMImportantFields, queryLLMIsQuerySane } from './llm';
 import { getActorContext } from './actors';
 
 async function main() {
@@ -30,6 +24,7 @@ async function main() {
         await Actor.exit({ statusMessage: 'Input is invalid' });
         return;
     }
+    if (input.debug) log.setLevel(LogLevel.DEBUG);
 
     log.info('getting dataset...');
     const dataset = (await getApifyDataset(input.dataset)) as { actId: string };
@@ -38,7 +33,7 @@ async function main() {
     log.info('infering dataset shape...');
     const typeShape = getDatasetTypeShape(datasetItems);
     const tableShape = convertTypeShapeToTableShape(typeShape);
-    console.log(tableShape);
+    log.debug(`Table shape: ${JSON.stringify(tableShape)}`);
 
     log.info('preparing database engine...');
     const db = createDatabase();
@@ -55,21 +50,26 @@ async function main() {
         return;
     }
 
-    const sql = await queryLLMGetSQL(input.query, tableShape, actorContext);
-    console.log(sql);
+    const importantFields = await queryLLMImportantFields(input.query, tableShape, actorContext);
+    const additionalSQLContext = `Possible important table fields:\n ${importantFields.map(([field, reason]) => `${field}: ${reason}`).join('\n')}`;
+    log.debug(`Important fields: ${JSON.stringify(importantFields)}`);
+
+    const sql = await queryLLMGetSQL(input.query, tableShape, actorContext, additionalSQLContext);
+    log.debug(`Generated SQL: ${sql}`);
 
     const userQuery = db.query(sql);
     const userQueryResult = userQuery.all();
     for (const row of userQueryResult) {
-        console.log(row);
+        log.debug(`Row: ${JSON.stringify(row)}`);
     }
 
     const response = await queryLLMGetReport(
         input.query,
-        userQueryResult,
+        sql,
+        JSON.stringify(userQueryResult),
         actorContext,
     );
-    console.log(response);
+    log.info(`Response: ${JSON.stringify(response)}`);
 
     await Actor.pushData({
         query: input.query,

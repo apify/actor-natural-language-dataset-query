@@ -94,9 +94,6 @@ export function getDatasetTypeShape(
     for (const [key, type] of Object.entries(typeShape)) {
         if (type === 'object') {
             const subPath = rootKey ? `${rootKey}.${key}` : key;
-            const subItems = obj.map(
-                (item) => getObjectKeyPath(item, subPath) as DatasetItem,
-            );
             typeShape[key] = getDatasetTypeShape(obj, subPath);
         }
     }
