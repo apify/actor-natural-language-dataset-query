@@ -1,5 +1,7 @@
 # tiny-query-engine
 
+This Actor internally uses https://apify.com/apify/openrouter for calling LLM, so you you bill be billed for LLM usage through this Actor.
+
 To install dependencies:
 
 ```bash

@@ -24,6 +24,7 @@ async function main() {
         await Actor.exit({ statusMessage: 'Input is invalid' });
         return;
     }
+    const model = input.modelName;
     if (input.debug) log.setLevel(LogLevel.DEBUG);
 
     log.info('getting dataset...');
@@ -43,18 +44,34 @@ async function main() {
     const actorContext = await getActorContext(dataset.actId);
 
     const { isSane: isQuerySane, reason: saneReason } =
-        await queryLLMIsQuerySane(input.query, tableShape, actorContext);
+        await queryLLMIsQuerySane({
+            prompt: input.query,
+            tableShape,
+            actorContext,
+            model,
+        });
     if (!isQuerySane) {
         log.error(`User query is not sane: ${saneReason} I am quitting...`);
         await Actor.exit({ statusMessage: 'User query is not sane' });
         return;
     }
 
-    const importantFields = await queryLLMImportantFields(input.query, tableShape, actorContext);
+    const importantFields = await queryLLMImportantFields({
+        prompt: input.query,
+        tableShape,
+        actorContext,
+        model,
+    });
     const additionalSQLContext = `Possible important table fields:\n ${importantFields.map(([field, reason]) => `${field}: ${reason}`).join('\n')}`;
     log.debug(`Important fields: ${JSON.stringify(importantFields)}`);
 
-    const sql = await queryLLMGetSQL(input.query, tableShape, actorContext, additionalSQLContext);
+    const sql = await queryLLMGetSQL({
+        prompt: input.query,
+        tableShape,
+        actorContext,
+        additionalContext: additionalSQLContext,
+        model,
+    });
     log.debug(`Generated SQL: ${sql}`);
 
     const userQuery = db.query(sql);
@@ -63,12 +80,13 @@ async function main() {
         log.debug(`Row: ${JSON.stringify(row)}`);
     }
 
-    const response = await queryLLMGetReport(
-        input.query,
-        sql,
-        JSON.stringify(userQueryResult),
+    const response = await queryLLMGetReport({
+        prompt: input.query,
+        querySQL: sql,
+        userQueryResult: JSON.stringify(userQueryResult),
         actorContext,
-    );
+        model,
+    });
     log.info(`Response: ${JSON.stringify(response)}`);
 
     await Actor.pushData({
@@ -78,7 +96,8 @@ async function main() {
         dataset: input.dataset,
     });
 
-    await Actor.exit();
+    //await Actor.exit();
+    process.exit(0);
 }
 
 await main();

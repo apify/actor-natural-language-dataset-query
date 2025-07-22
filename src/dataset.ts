@@ -72,6 +72,7 @@ export function getDatasetTypeShape(
     // Collect all possible types for each key
     for (const item of obj) {
         const itemObj = getObjectKeyPath(item, rootKey);
+        // If object is empty or undefined, skip it
         if (!itemObj) continue;
         for (const [key, value] of Object.entries(
             itemObj as Record<string, unknown>,

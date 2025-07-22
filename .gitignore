@@ -1,4 +1,7 @@
+.envrc
+
 # apify
+input.json
 storage/
 
 # dependencies (bun install)

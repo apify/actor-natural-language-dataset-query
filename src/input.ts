@@ -12,7 +12,7 @@ interface Input {
 const inputSchema = z.object({
     query: z.string(),
     dataset: z.string(),
-    modelName: z.string().default('gpt-4o-mini'),
+    modelName: z.string().default('openai/gpt-4.1'),
     debug: z.boolean().default(false),
 });
 

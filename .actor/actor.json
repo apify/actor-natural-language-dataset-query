@@ -1,6 +1,6 @@
 {
     "actorSpecification": 1,
-    "name": "tiny-query-engine",
+    "name": "tiny-dataset-query-engine",
     "version": "0.0",
     "buildTag": "latest",
     "storages": {

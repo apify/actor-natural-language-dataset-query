@@ -1,12 +1,12 @@
 {
-    "title": "Tiny Query Engine",
+    "title": "Tiny Dataset Query Engine",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
         "query": {
             "title": "Query",
             "type": "string",
-            "description": "Query for the agent.",
+            "description": "Query for the LLM.",
             "editor": "textfield",
             "default": "This is a fallback test query, do nothing and !!do not call any tools!!. If asked to generate structured response, create a dummy one without optional fields, and empty lists - keep it as minimal as possible."
         },
@@ -19,10 +19,10 @@
         "modelName": {
             "title": "OpenAI model",
             "type": "string",
-            "description": "The OpenAI model to use. Currently supported models are gpt-4o and gpt-4o-mini.",
-            "enum": ["gpt-4o", "gpt-4o-mini"],
-            "default": "gpt-4o-mini",
-            "prefill": "gpt-4o-mini"
+            "description": "The OpenAI model to use. Currently supported models are gpt-4.1 and gpt-4.1-mini.",
+            "enum": ["openai/gpt-4.1", "openai/gpt-4.1-mini"],
+            "default": "openai/gpt-4.1",
+            "prefill": "openai/gpt-4.1"
         },
         "debug": {
             "title": "Debug",
