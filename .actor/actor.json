@@ -3,6 +3,7 @@
     "name": "tiny-dataset-query-engine",
     "version": "0.0",
     "buildTag": "latest",
+    "usesStandbyMode": true,
     "storages": {
         "dataset": "./dataset_schema.json"
     },

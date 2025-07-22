@@ -2,11 +2,11 @@ import { Actor, log } from 'apify';
 
 import { z } from 'zod';
 
-interface Input {
+export interface Input {
     query: string;
     dataset: string;
     modelName: string;
-    debug: boolean;
+    debug?: boolean;
 }
 
 const inputSchema = z.object({
