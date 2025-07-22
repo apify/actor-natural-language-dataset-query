@@ -2,6 +2,7 @@ import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { runQuery } from './engine';
 import { log } from 'apify';
+import { inputSchema } from './input';
 
 function getServerPort(): number {
     const port = process.env.ACTOR_WEB_SERVER_PORT;
@@ -38,15 +39,23 @@ export function runStandby() {
     app.get('/', async (req: Request, res: Response) => {
         const query = getQueryParamStringValue(req, 'query');
         const dataset = getQueryParamStringValue(req, 'dataset');
-        const modelName = getQueryParamStringValue(req, 'modelName') || 'openai/gpt-4.1';
-        if (!query || !dataset) {
-            res.status(400).json({ error: 'Missing required query or dataset parameters' });
+        const modelName = getQueryParamStringValue(req, 'modelName') || 'google/gemini-2.5-flash';
+        const input = inputSchema.safeParse({
+            query,
+            dataset,
+            modelName,
+        });
+        if (!input.success) {
+            res.status(400).json({
+                error: 'Invalid input',
+                details: input.error
+            });
             return;
         }
         const response = await runQuery({
-            query,
-            dataset,
-            modelName
+            query: input.data.query,
+            dataset: input.data.dataset,
+            modelName: input.data.modelName
         });
         
         if (response) {

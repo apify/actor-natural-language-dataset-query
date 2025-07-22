@@ -19,10 +19,15 @@
         "modelName": {
             "title": "OpenAI model",
             "type": "string",
-            "description": "The OpenAI model to use. Currently supported models are gpt-4.1 and gpt-4.1-mini.",
-            "enum": ["openai/gpt-4.1", "openai/gpt-4.1-mini"],
-            "default": "openai/gpt-4.1",
-            "prefill": "openai/gpt-4.1"
+            "description": "The OpenAI model to use. Currently supported models are Gemini 2.5 Flash, Gemini 2.0 Flash, GPT-4.1, and GPT-4.1 Mini.",
+            "enum": [
+                "google/gemini-2.5-flash",
+                "google/gemini-2.0-flash-001",
+                "openai/gpt-4.1",
+                "openai/gpt-4.1-mini"
+            ],
+            "default": "google/gemini-2.5-flash",
+            "prefill": "google/gemini-2.5-flash"
         },
         "debug": {
             "title": "Debug",

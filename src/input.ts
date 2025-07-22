@@ -9,10 +9,15 @@ export interface Input {
     debug?: boolean;
 }
 
-const inputSchema = z.object({
+export const inputSchema = z.object({
     query: z.string(),
     dataset: z.string(),
-    modelName: z.string().default('openai/gpt-4.1'),
+    modelName: z.enum([
+        'google/gemini-2.5-flash',
+        'google/gemini-2.0-flash-001',
+        'openai/gpt-4.1',
+        'openai/gpt-4.1-mini',
+    ]),
     debug: z.boolean().default(false),
 });
 

@@ -106,7 +106,7 @@ export async function queryLLMIsQuerySane(
         Actor description: ${actorContext.description}`,
     });
 
-    const lines = response.split('\n');
+    const lines = response.split('\n').filter(line => line.trim() !== '');
     if (lines.length !== 2) {
         throw new Error('Invalid response from LLM');
     }
