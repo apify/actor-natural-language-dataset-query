@@ -8,7 +8,7 @@
             "type": "string",
             "description": "Query for the LLM.",
             "editor": "textfield",
-            "default": "This is a fallback test query, do nothing and !!do not call any tools!!. If asked to generate structured response, create a dummy one without optional fields, and empty lists - keep it as minimal as possible."
+            "default": "What is the total number of pages containing the keyword 'apple'?"
         },
         "dataset": {
             "title": "Dataset",
