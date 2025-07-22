@@ -13,7 +13,7 @@ export function getObjectKeyPath(
         return obj;
     }
 
-    const path = keyPath.split('.');
+    const path = keyPath.split(".");
 
     let current = obj;
     for (const key of path) {
@@ -45,11 +45,11 @@ export function setObjectKeyPath(
         return current;
     }
 
-    const path = keyPath.split('.');
+    const path = keyPath.split(".");
 
     for (let i = 0; i < path.length - 1; i++) {
         const key = path[i] as string;
-        if (!current[key] || typeof current[key] !== 'object') {
+        if (!current[key] || typeof current[key] !== "object") {
             current[key] = {};
         }
         current = current[key] as Record<string, unknown>;
@@ -70,7 +70,7 @@ export function setObjectKeyPath(
  */
 export function flattenObject(
     obj: Record<string, unknown>,
-    prefix = '',
+    prefix = "",
 ): Record<string, unknown> {
     const flattened: Record<string, unknown> = {};
 
@@ -78,7 +78,7 @@ export function flattenObject(
         if (Object.prototype.hasOwnProperty.call(obj, key)) {
             const newKey = prefix ? `${prefix}.${key}` : key;
             if (
-                typeof obj[key] === 'object' &&
+                typeof obj[key] === "object" &&
                 obj[key] !== null &&
                 !Array.isArray(obj[key])
             ) {
@@ -102,5 +102,5 @@ export function flattenObject(
  * @returns True if the value is a float, false otherwise.
  */
 export function isNumberFloat(value: unknown): boolean {
-    return typeof value === 'number' && !Number.isInteger(value);
+    return typeof value === "number" && !Number.isInteger(value);
 }

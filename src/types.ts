@@ -1,13 +1,13 @@
 export type ValueType =
-    | 'string'
-    | 'integer'
-    | 'float'
-    | 'boolean'
-    | 'object'
-    | 'unknown'
-    | 'array';
+    | "string"
+    | "integer"
+    | "float"
+    | "boolean"
+    | "object"
+    | "unknown"
+    | "array";
 
-export type SqliteType = 'TEXT' | 'INTEGER' | 'REAL';
+export type SqliteType = "TEXT" | "INTEGER" | "REAL";
 
 export type TypeShape = ValueType | { [key: string]: TypeShape };
 

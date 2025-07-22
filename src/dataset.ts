@@ -1,6 +1,6 @@
-import { ApifyClient } from 'apify';
-import { getObjectKeyPath, isNumberFloat } from './utils';
-import type { DatasetItem, TypeShape, ValueType } from './types';
+import { ApifyClient } from "apify";
+import { getObjectKeyPath, isNumberFloat } from "./utils";
+import type { DatasetItem, TypeShape, ValueType } from "./types";
 
 export async function getApifyDataset(id: string): Promise<unknown> {
     const apifyClient = new ApifyClient({
@@ -29,14 +29,14 @@ export async function getApifyDatasetItems(id: string): Promise<DatasetItem[]> {
  */
 export function resolveTypeCandidate(types: Set<string>): ValueType {
     const filteredTypes = Array.from(types).filter(
-        (type) => type !== 'unknown',
+        (type) => type !== "unknown",
     );
 
     if (filteredTypes.length === 1) {
         return filteredTypes[0] as ValueType;
     }
 
-    return 'unknown';
+    return "unknown";
 }
 
 /**
@@ -47,24 +47,24 @@ export function resolveTypeCandidate(types: Set<string>): ValueType {
  */
 function getValueType(value: unknown): ValueType {
     if (Array.isArray(value)) {
-        return 'array';
+        return "array";
     }
     if (!value) {
-        return 'unknown';
+        return "unknown";
     }
     const type = typeof value;
-    if (type === 'string' || type === 'boolean' || type === 'object') {
+    if (type === "string" || type === "boolean" || type === "object") {
         return type;
     }
-    if (type === 'number') {
-        return isNumberFloat(value) ? 'float' : 'integer';
+    if (type === "number") {
+        return isNumberFloat(value) ? "float" : "integer";
     }
-    return 'unknown';
+    return "unknown";
 }
 
 export function getDatasetTypeShape(
     obj: DatasetItem[],
-    rootKey = '',
+    rootKey = "",
 ): TypeShape {
     const typeShape: TypeShape = {};
     const typeCandidates: Record<string, Set<string>> = {};
@@ -93,7 +93,7 @@ export function getDatasetTypeShape(
 
     // Handle objects recursively
     for (const [key, type] of Object.entries(typeShape)) {
-        if (type === 'object') {
+        if (type === "object") {
             const subPath = rootKey ? `${rootKey}.${key}` : key;
             typeShape[key] = getDatasetTypeShape(obj, subPath);
         }

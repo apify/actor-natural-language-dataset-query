@@ -1,39 +1,44 @@
-import { VALUE_TYPES_TO_SKIP } from './const';
+import { VALUE_TYPES_TO_SKIP } from "./const";
 import type {
     DatasetItem,
     SqliteType,
     TableShape,
     TypeShape,
     ValueType,
-} from './types';
-import { flattenObject, getObjectKeyPath } from './utils';
-import type { Database, SQLQueryBindings } from 'bun:sqlite';
-import type { Input } from './input';
+} from "./types";
+import { flattenObject, getObjectKeyPath } from "./utils";
+import type { Database, SQLQueryBindings } from "bun:sqlite";
+import type { Input } from "./input";
 import {
     getApifyDataset,
     getApifyDatasetItems,
     getDatasetTypeShape,
-} from './dataset';
-import { createDatabase } from './db';
-import { TABLE_NAME } from './const';
-import { queryLLMGetReport, queryLLMGetSQL, queryLLMImportantFields, queryLLMIsQuerySane } from './llm';
-import { getActorContext } from './actors';
-import { Actor, log } from 'apify';
+} from "./dataset";
+import { createDatabase } from "./db";
+import { TABLE_NAME } from "./const";
+import {
+    queryLLMGetReport,
+    queryLLMGetSQL,
+    queryLLMImportantFields,
+    queryLLMIsQuerySane,
+} from "./llm";
+import { getActorContext } from "./actors";
+import { Actor, log } from "apify";
 
 function convertValuePrimitiveTypeToSQLiteType(
     valueType: ValueType,
 ): SqliteType {
     switch (valueType) {
-        case 'string':
-            return 'TEXT';
-        case 'integer':
-            return 'INTEGER';
-        case 'float':
-            return 'REAL';
-        case 'boolean':
-            return 'INTEGER';
+        case "string":
+            return "TEXT";
+        case "integer":
+            return "INTEGER";
+        case "float":
+            return "REAL";
+        case "boolean":
+            return "INTEGER";
         default:
-            return 'TEXT';
+            return "TEXT";
     }
 }
 
@@ -62,7 +67,7 @@ export function getSQLSchemaFromTableShape(
 ): string {
     const columns = Object.entries(tableShape)
         .map(([columnName, columnType]) => `'${columnName}' ${columnType}`)
-        .join(', ');
+        .join(", ");
 
     return `CREATE TABLE ${tableName} (${columns});`;
 }
@@ -85,10 +90,10 @@ export function populateDatabase(
 ) {
     const columns = Object.keys(tableShape)
         .map((col) => `'${col}'`)
-        .join(', ');
+        .join(", ");
     const placeholders = Object.keys(tableShape)
-        .map(() => '?')
-        .join(', ');
+        .map(() => "?")
+        .join(", ");
 
     const query = db.query(
         `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders})`,
@@ -102,20 +107,19 @@ export function populateDatabase(
     }
 }
 
-
 export async function runQuery(input: Input): Promise<string | null> {
     const model = input.modelName;
 
-    log.info('getting dataset...');
+    log.info("getting dataset...");
     const dataset = (await getApifyDataset(input.dataset)) as { actId: string };
     const datasetItems = await getApifyDatasetItems(input.dataset);
 
-    log.info('infering dataset shape...');
+    log.info("infering dataset shape...");
     const typeShape = getDatasetTypeShape(datasetItems);
     const tableShape = convertTypeShapeToTableShape(typeShape);
     log.debug(`Table shape: ${JSON.stringify(tableShape)}`);
 
-    log.info('preparing database engine...');
+    log.info("preparing database engine...");
     const db = createDatabase();
     initializeDatabase(db, TABLE_NAME, tableShape);
     populateDatabase(db, TABLE_NAME, tableShape, datasetItems);
@@ -140,7 +144,7 @@ export async function runQuery(input: Input): Promise<string | null> {
         actorContext,
         model,
     });
-    const additionalSQLContext = `Possible important table fields:\n ${importantFields.map(([field, reason]) => `${field}: ${reason}`).join('\n')}`;
+    const additionalSQLContext = `Possible important table fields:\n ${importantFields.map(([field, reason]) => `${field}: ${reason}`).join("\n")}`;
     log.debug(`Important fields: ${JSON.stringify(importantFields)}`);
 
     const sql = await queryLLMGetSQL({
@@ -173,7 +177,7 @@ export async function runQuery(input: Input): Promise<string | null> {
         response,
         dataset: input.dataset,
     });
-    log.info('Data pushed to Apify dataset');
-    
+    log.info("Data pushed to Apify dataset");
+
     return response;
 }

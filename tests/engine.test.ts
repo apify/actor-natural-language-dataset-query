@@ -1,83 +1,83 @@
-import { expect, test } from 'bun:test';
+import { expect, test } from "bun:test";
 import type {
     DatasetItem,
     SqliteType,
     TableShape,
     TypeShape,
-} from '../src/types';
+} from "../src/types";
 import {
     convertTypeShapeToTableShape,
     getSQLSchemaFromTableShape,
     initializeDatabase,
     populateDatabase,
-} from '../src/engine';
-import { createDatabase } from '../src/db';
-import { getDatasetTypeShape } from '../src/dataset';
+} from "../src/engine";
+import { createDatabase } from "../src/db";
+import { getDatasetTypeShape } from "../src/dataset";
 
-test('convert type shape to table shape', () => {
+test("convert type shape to table shape", () => {
     const typeShape: TypeShape = {
         level1: {
             level2: {
-                level3: 'string',
-                integerProp: 'integer',
-                floatProp: 'float',
+                level3: "string",
+                integerProp: "integer",
+                floatProp: "float",
             },
-            stringProp: 'string',
+            stringProp: "string",
         },
-        topLevelProp: 'boolean',
-        arrayProp: 'array',
+        topLevelProp: "boolean",
+        arrayProp: "array",
     };
 
     const expected: Record<string, SqliteType> = {
-        'level1.level2.level3': 'TEXT',
-        'level1.level2.integerProp': 'INTEGER',
-        'level1.level2.floatProp': 'REAL',
-        'level1.stringProp': 'TEXT',
-        topLevelProp: 'INTEGER',
+        "level1.level2.level3": "TEXT",
+        "level1.level2.integerProp": "INTEGER",
+        "level1.level2.floatProp": "REAL",
+        "level1.stringProp": "TEXT",
+        topLevelProp: "INTEGER",
     };
 
     const result = convertTypeShapeToTableShape(typeShape);
     expect(result).toEqual(expected);
 });
 
-test('sql schema from table shape', () => {
-    const tableName = 'test_table';
+test("sql schema from table shape", () => {
+    const tableName = "test_table";
     const tableShape: TableShape = {
-        'level1.level2.level3': 'TEXT',
-        'level1.level2.integerProp': 'INTEGER',
-        'level1.level2.floatProp': 'REAL',
-        'level1.stringProp': 'TEXT',
-        topLevelProp: 'INTEGER',
+        "level1.level2.level3": "TEXT",
+        "level1.level2.integerProp": "INTEGER",
+        "level1.level2.floatProp": "REAL",
+        "level1.stringProp": "TEXT",
+        topLevelProp: "INTEGER",
     };
     const expected = `CREATE TABLE ${tableName} ('level1.level2.level3' TEXT, 'level1.level2.integerProp' INTEGER, 'level1.level2.floatProp' REAL, 'level1.stringProp' TEXT, 'topLevelProp' INTEGER);`;
     expect(getSQLSchemaFromTableShape(tableName, tableShape)).toEqual(expected);
 });
 
-test('init database, insert and fetch', () => {
+test("init database, insert and fetch", () => {
     const tableShape: TableShape = {
-        'level1.level2.level3': 'TEXT',
-        'level1.level2.integerProp': 'INTEGER',
-        'level1.stringProp': 'TEXT',
-        topLevelProp: 'INTEGER',
+        "level1.level2.level3": "TEXT",
+        "level1.level2.integerProp": "INTEGER",
+        "level1.stringProp": "TEXT",
+        topLevelProp: "INTEGER",
     };
 
     const db = createDatabase();
-    initializeDatabase(db, 'dataset', tableShape);
+    initializeDatabase(db, "dataset", tableShape);
 
     // insert
     const query = db.query(
         'INSERT INTO dataset ("level1.level2.level3", "level1.level2.integerProp", "level1.stringProp", "topLevelProp") VALUES (?, ?, ?, ?)',
     );
-    query.run('hello', 42, 'test', 1);
+    query.run("hello", 42, "test", 1);
 
     // fetch
-    const stmt = db.prepare('SELECT * FROM dataset');
+    const stmt = db.prepare("SELECT * FROM dataset");
     const result = stmt.all();
     expect(result).toEqual([
         {
-            'level1.level2.level3': 'hello',
-            'level1.level2.integerProp': 42,
-            'level1.stringProp': 'test',
+            "level1.level2.level3": "hello",
+            "level1.level2.integerProp": 42,
+            "level1.stringProp": "test",
             topLevelProp: 1,
         },
     ]);
@@ -85,25 +85,25 @@ test('init database, insert and fetch', () => {
     db.close();
 });
 
-test('init database, populate with dataset', () => {
+test("init database, populate with dataset", () => {
     const dataset: DatasetItem[] = [
         {
             status: 200,
-            response: 'ok',
+            response: "ok",
             metadata: {
                 id: 1,
             },
         },
         {
             status: 404,
-            response: 'not found',
+            response: "not found",
             metadata: {
                 id: 2,
             },
         },
         {
             status: 500,
-            response: 'server error',
+            response: "server error",
             metadata: {
                 id: 3,
             },
@@ -112,21 +112,21 @@ test('init database, populate with dataset', () => {
     const expected = [
         {
             status: 200,
-            response: 'ok',
-            'metadata.id': 1,
+            response: "ok",
+            "metadata.id": 1,
         },
         {
             status: 404,
-            response: 'not found',
-            'metadata.id': 2,
+            response: "not found",
+            "metadata.id": 2,
         },
         {
             status: 500,
-            response: 'server error',
-            'metadata.id': 3,
+            response: "server error",
+            "metadata.id": 3,
         },
     ];
-    const tableName = 'dataset';
+    const tableName = "dataset";
 
     // prepare type shape
     const typeShape = getDatasetTypeShape(dataset);

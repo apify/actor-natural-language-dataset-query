@@ -1,17 +1,17 @@
-import { test, expect } from 'bun:test';
-import { getDatasetTypeShape } from '../src/dataset';
-import type { DatasetItem, TypeShape } from '../src/types';
+import { test, expect } from "bun:test";
+import { getDatasetTypeShape } from "../src/dataset";
+import type { DatasetItem, TypeShape } from "../src/types";
 
-test('type shape basic', () => {
+test("type shape basic", () => {
     const input: DatasetItem[] = [
         {
             level1: {
                 level2: {
-                    level3: 'hello',
+                    level3: "hello",
                     integerProp: 42,
                     floatProp: 42.5,
                 },
-                stringProp: 'test',
+                stringProp: "test",
             },
             topLevelProp: true,
         },
@@ -20,20 +20,20 @@ test('type shape basic', () => {
     const expected: TypeShape = {
         level1: {
             level2: {
-                level3: 'string',
-                integerProp: 'integer',
-                floatProp: 'float',
+                level3: "string",
+                integerProp: "integer",
+                floatProp: "float",
             },
-            stringProp: 'string',
+            stringProp: "string",
         },
-        topLevelProp: 'boolean',
+        topLevelProp: "boolean",
     };
 
-    const result = getDatasetTypeShape(input, '');
+    const result = getDatasetTypeShape(input, "");
     expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
 });
 
-test('type shape prop with null value', () => {
+test("type shape prop with null value", () => {
     const input: DatasetItem[] = [
         {
             prop: null,
@@ -47,14 +47,14 @@ test('type shape prop with null value', () => {
     ];
 
     const expected: TypeShape = {
-        prop: 'integer',
+        prop: "integer",
     };
 
-    const result = getDatasetTypeShape(input, '');
+    const result = getDatasetTypeShape(input, "");
     expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
 });
 
-test('type shape with array type', () => {
+test("type shape with array type", () => {
     const input: DatasetItem[] = [
         {
             arrayProp: [],
@@ -65,9 +65,9 @@ test('type shape with array type', () => {
     ];
 
     const expected: TypeShape = {
-        arrayProp: 'array',
+        arrayProp: "array",
     };
 
-    const result = getDatasetTypeShape(input, '');
+    const result = getDatasetTypeShape(input, "");
     expect(JSON.stringify(result)).toEqual(JSON.stringify(expected));
 });

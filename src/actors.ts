@@ -1,5 +1,5 @@
-import { ApifyClient } from 'apify';
-import type { ActorContext } from './types';
+import { ApifyClient } from "apify";
+import type { ActorContext } from "./types";
 
 export async function getActorContext(actor: string): Promise<ActorContext> {
     const apifyClient = new ApifyClient({
@@ -13,6 +13,6 @@ export async function getActorContext(actor: string): Promise<ActorContext> {
 
     return {
         name: actorObj.title || actorObj.name,
-        description: actorObj.description || '',
+        description: actorObj.description || "",
     };
 }

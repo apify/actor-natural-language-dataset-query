@@ -1,5 +1,5 @@
-import { Database } from 'bun:sqlite';
+import { Database } from "bun:sqlite";
 
 export function createDatabase() {
-    return new Database(':memory:');
+    return new Database(":memory:");
 }
