@@ -7,7 +7,7 @@ This Actor allows you to run natural language queries against an Apify dataset. 
 
 ## ⚙️ How does it work?
 
-This Actor uses LLMs to understand your query, generate an SQL query, and report the results. First, the Actor retrieves the dataset items and builds an internal schema representation of the dataset, which is turned into an in-memory [SQLite3](https://www.sqlite.org/) database. Then, the LLM verifies whether your query is valid based on the retrieved data from the [dataset](https://docs.apify.com/platform/storage/dataset). If it is, it generates the SQL query and runs it against the SQLite3 database. Finally, it summarizes the results and returns them to you.
+This Actor uses LLMs to understand your query, generate an SQL statement, and report the results. First, the Actor retrieves the dataset items and builds an internal schema representation, which is converted into an in-memory [SQLite3](https://www.sqlite.org/) database. Then, the LLM generates an SQL query and executes it against the SQLite3 database. Finally, it summarizes the results and returns them to you.
 
 ## 🚀 Usage
 

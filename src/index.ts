@@ -2,6 +2,7 @@ import { Actor, log, LogLevel } from "apify";
 import { handleInput } from "./input";
 import { runQuery } from "./engine";
 import { runStandby } from "./standby";
+import { ApifyApiError } from "apify-client";
 
 async function runNormal() {
     const input = await handleInput();
@@ -11,11 +12,18 @@ async function runNormal() {
         return;
     }
     if (input.debug) log.setLevel(LogLevel.DEBUG);
-    const response = await runQuery(input);
-
-    if (!response) {
-        await Actor.exit({ statusMessage: "User query is not sane" });
-        return;
+    try {
+        await runQuery(input);
+    } catch (error) {
+        if (
+            error instanceof ApifyApiError &&
+            error.message.includes("not found")
+        ) {
+            log.error("Dataset not found", { datasetId: input.dataset });
+            await Actor.exit({ statusMessage: "Dataset not found" });
+            return;
+        }
+        throw error; // Re-throw unexpected errors
     }
 
     await Actor.exit();

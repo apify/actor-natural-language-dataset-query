@@ -20,7 +20,6 @@ import {
     queryLLMGetReport,
     queryLLMGetSQL,
     queryLLMImportantFields,
-    queryLLMIsQuerySane,
 } from "./llm";
 import { getActorContext } from "./actors";
 import { Actor, log } from "apify";
@@ -107,7 +106,13 @@ export function populateDatabase(
     }
 }
 
-export async function runQuery(input: Input): Promise<string | null> {
+/**
+ * Runs a query against the database.
+ *
+ * @param input - The input containing the query, dataset ID, and model name.
+ * @returns The result of the query.
+ */
+export async function runQuery(input: Input): Promise<string> {
     const model = input.modelName;
 
     log.info("getting dataset...");
@@ -125,18 +130,6 @@ export async function runQuery(input: Input): Promise<string | null> {
     populateDatabase(db, TABLE_NAME, tableShape, datasetItems);
 
     const actorContext = await getActorContext(dataset.actId);
-
-    const { isSane: isQuerySane, reason: saneReason } =
-        await queryLLMIsQuerySane({
-            prompt: input.query,
-            tableShape,
-            actorContext,
-            model,
-        });
-    if (!isQuerySane) {
-        log.warning(`User query is not sane: ${saneReason}`);
-        return null;
-    }
 
     const importantFields = await queryLLMImportantFields({
         prompt: input.query,

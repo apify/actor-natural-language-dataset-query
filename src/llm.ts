@@ -22,11 +22,16 @@ export async function queryLLM(input: {
         model = "openai/gpt-4.1-mini",
     } = input;
     const response = await client.chat.completions.create({
+        temperature: 0.0,
         model: model,
         messages: [
             {
+                role: "system",
+                content: instructions,
+            },
+            {
                 role: "user",
-                content: `${instructions}\n\n${query}`,
+                content: query,
             },
         ],
     });
@@ -97,7 +102,7 @@ export async function queryLLMIsQuerySane(args: {
     const { text: response } = await queryLLM({
         model,
         instructions: `You are an expert data analyst. Determine if the provided user query makes sense given the table schema and actor context. Respond with 'yes' if the query is sane and 'no' if it is not. For example, if the table schema is related to an e-commerce site and the user wants to show the total number of Instagram posts, the query is not sane: so output 'no'. STRICTLY ADHERE TO THIS OUTPUT FORMAT: ONLY OUTPUT 'yes' or 'no' ON THE FIRST LINE AND ON THE SECOND LINE A REASON WHICH IS A SINGLE SHORT SENTENCE. IF THE OUTPUT IS 'yes' THEN THE REASON MUST BE n/a. IF THE OUTPUT IS 'no' THE SECOND LINE MUST BE A REAL REASON. USE RAW STRINGS WITHOUT ANY FORMATTING LIKE MARKDOWN.`,
-        query: `Is the following user query sane: ${prompt}
+        query: `Decide if the following user query is sane: ${prompt}
         Table schema: ${JSON.stringify(tableShape)}
         Actor name: ${actorContext.name}
         Actor description: ${actorContext.description}`,
