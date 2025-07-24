@@ -1,4 +1,4 @@
-# Tiny Dataset Query Engine
+# Natural Language Dataset Query
 
 This Actor enables you to run natural language queries against an Apify dataset. For example, after running a web scraping Actor, you can ask this Actor how many pages contain a specific keyword. It supports queries via MCP ([Model Control Protocol](https://modelcontextprotocol.io)) and REST API in Standby mode, or traditional usage through the Apify Console.
 
@@ -39,7 +39,7 @@ To run the Actor in Standby mode, send an HTTP GET request to the Actor's URL wi
 - `modelName`: (optional) The name of the LLM model you want to use for the query. If not provided, the Actor will use the default model defined in the Actor input. See the Actor input schema for a list of available models. In most cases, the Google Gemini models work best for this Actor.
 
 ```text
-https://jakub-kopecky--tiny-dataset-query-engine.apify.actor/?token=YOUR_APIFY_TOKEN&dataset=DATASET_ID&query=YOUR_QUERY
+https://natural-language-dataset-query.apify.actor/?token=YOUR_APIFY_TOKEN&dataset=DATASET_ID&query=YOUR_QUERY
 ```
 
 ### 🖧 MCP server mode
@@ -49,13 +49,13 @@ You can run the Actor in MCP server mode to process queries via the MCP protocol
 To connect, use your MCP client and point it to:
 
 ```text
-https://tiny-dataset-query-engine.apify.actor/mcp
+https://natural-language-dataset-query.apify.actor/mcp
 ```
 
 If you are using a legacy MCP client that only supports SSE transport, you can connect to:
 
 ```text
-https://tiny-dataset-query-engine.apify.actor/sse
+https://natural-language-dataset-query.apify.actor/sse
 ```
 
 > **ℹ️ Notice:**
