@@ -43,7 +43,8 @@ https://jakub-kopecky--tiny-dataset-query-engine.apify.actor/?token=YOUR_APIFY_T
 ```
 
 ### 🖧 MCP server mode
-You can run the Actor in MCP server mode to process queries via the MCP protocol. This enables integration with MCP-compatible clients for advanced, potentially agentic workflows.
+
+You can run the Actor in MCP server mode to process queries via the MCP protocol. This enables integration with MCP clients for advanced, potentially agentic workflows.
 
 To connect, use your MCP client and point it to:
 
@@ -51,13 +52,10 @@ To connect, use your MCP client and point it to:
 https://tiny-dataset-query-engine.apify.actor/mcp
 ```
 
-> **ℹ️ Notice:**
-> The MCP server supports OAuth authentication. If your client supports it, you can use the OAuth flow to authenticate. Alternatively, pass the `?token=YOUR_APIFY_TOKEN` query parameter in the request URL or set the `Authorization` header to `Bearer YOUR_APIFY_TOKEN`.
-
-The Actor also acts as an MCP server, allowing you to connect using your favorite MCP client (for example, the [Apify MCP client](https://apify.com/jiri.spilka/tester-mcp-client)). Connect your MCP client to the Actor MCP server URL:
+If you are using a legacy MCP client that only supports SSE transport, you can connect to:
 
 ```text
-https://tiny-dataset-query-engine.apify.actor/mcp
+https://tiny-dataset-query-engine.apify.actor/sse
 ```
 
 > **ℹ️ Notice:**
