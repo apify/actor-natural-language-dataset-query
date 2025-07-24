@@ -17,8 +17,7 @@ export async function getApifyDatasetItems(id: string): Promise<DatasetItem[]> {
 
     const datasetClient = apifyClient.dataset(id);
 
-    const items = (await datasetClient.listItems()).items;
-    return items;
+    return (await datasetClient.listItems()).items;
 }
 
 /**
@@ -62,6 +61,13 @@ function getValueType(value: unknown): ValueType {
     return "unknown";
 }
 
+/**
+ * Extract the type schema of the Apify dataset items.
+ *
+ * @param obj - The dataset items to analyze.
+ * @param rootKey - The root key for nested objects (used for recursion).
+ * @returns The type shape of the dataset items.
+ */
 export function getDatasetTypeShape(
     obj: DatasetItem[],
     rootKey = "",

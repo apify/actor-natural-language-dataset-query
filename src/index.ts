@@ -1,16 +1,26 @@
 import { Actor, log, LogLevel } from "apify";
-import { handleInput } from "./input";
+import { handleInput, type Input } from "./input";
 import { runQuery } from "./engine";
 import { runStandby } from "./standby";
 import { ApifyApiError } from "apify-client";
+import { z } from "zod";
 
 async function runNormal() {
-    const input = await handleInput();
-    if (!input) {
-        log.error("Input is invalid");
-        await Actor.exit({ statusMessage: "Input is invalid" });
+    let input: Input | null = null;
+    try {
+        input = await handleInput();
+    } catch (e) {
+        if (e instanceof SyntaxError) {
+            log.error("Input JSON parse error", { error: e });
+        } else if (e instanceof z.ZodError) {
+            log.error("Input validation failed", { error: e });
+        } else {
+            log.error("Input unknown error", { error: e });
+        }
+        await Actor.exit({ statusMessage: "Input is invalid, please check the logs" });
         return;
     }
+
     if (input.debug) log.setLevel(LogLevel.DEBUG);
     try {
         await runQuery(input);

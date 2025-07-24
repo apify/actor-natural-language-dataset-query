@@ -1,4 +1,4 @@
-import { Actor, log } from "apify";
+import { Actor } from "apify";
 
 import { z } from "zod";
 
@@ -21,23 +21,10 @@ export const inputSchema = z.object({
     debug: z.boolean().default(false),
 });
 
-export async function handleInput(): Promise<Input | null> {
+export async function handleInput(): Promise<Input> {
     let input = await Actor.getInput();
 
-    try {
-        if (!input) input = JSON.parse(process.env.ACTOR_INPUT ?? "");
-        const inputModel = inputSchema.parse(input);
-
-        return inputModel as Input;
-    } catch (e) {
-        if (e instanceof SyntaxError) {
-            log.error("Input JSON parse error", { error: e });
-        } else if (e instanceof z.ZodError) {
-            log.error("Input validation failed", { error: e });
-        } else {
-            log.error("Unknown error", { error: e });
-        }
-    }
-
-    return null;
+    // Used to pass input in local Docker developement setup
+    if (!input) input = JSON.parse(process.env.ACTOR_INPUT ?? "");
+    return inputSchema.parse(input) as Input;
 }

@@ -7,14 +7,13 @@ import type {
     ValueType,
 } from "./types";
 import { flattenObject, getObjectKeyPath } from "./utils";
-import type { Database, SQLQueryBindings } from "bun:sqlite";
+import { Database, type SQLQueryBindings } from "bun:sqlite";
 import type { Input } from "./input";
 import {
     getApifyDataset,
     getApifyDatasetItems,
     getDatasetTypeShape,
 } from "./dataset";
-import { createDatabase } from "./db";
 import { TABLE_NAME } from "./const";
 import {
     queryLLMGetReport,
@@ -23,6 +22,10 @@ import {
 } from "./llm";
 import { getActorContext } from "./actors";
 import { Actor, log } from "apify";
+
+export function createDatabase() {
+    return new Database(":memory:");
+}
 
 function convertValuePrimitiveTypeToSQLiteType(
     valueType: ValueType,
@@ -41,6 +44,12 @@ function convertValuePrimitiveTypeToSQLiteType(
     }
 }
 
+/**
+ * Converts Apify dataset type schema to SQLite compatible table schema.
+ *
+ * @param typeShape - The type shape of the dataset items.
+ * @returns The SQLite table schema.
+ */
 export function convertTypeShapeToTableShape(typeShape: TypeShape): TableShape {
     const tableShape: TableShape = {};
     const typeShapeFlatten = flattenObject(
@@ -115,16 +124,16 @@ export function populateDatabase(
 export async function runQuery(input: Input): Promise<string> {
     const model = input.modelName;
 
-    log.info("getting dataset...");
+    log.info("Getting dataset...");
     const dataset = (await getApifyDataset(input.dataset)) as { actId: string };
     const datasetItems = await getApifyDatasetItems(input.dataset);
 
-    log.info("infering dataset shape...");
+    log.info("Inferring dataset shape...");
     const typeShape = getDatasetTypeShape(datasetItems);
     const tableShape = convertTypeShapeToTableShape(typeShape);
     log.debug(`Table shape: ${JSON.stringify(tableShape)}`);
 
-    log.info("preparing database engine...");
+    log.info("Preparing database engine...");
     const db = createDatabase();
     initializeDatabase(db, TABLE_NAME, tableShape);
     populateDatabase(db, TABLE_NAME, tableShape, datasetItems);

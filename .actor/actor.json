@@ -1,6 +1,7 @@
 {
     "actorSpecification": 1,
     "name": "tiny-dataset-query-engine",
+    "description": "Use natural language queries to retrieve results from an Apify dataset. This Actor provides a query engine that loads a dataset, executes SQL queries, and synthesizes results. It works as an MCP server or REST API in Actor standby mode.",
     "version": "0.0",
     "buildTag": "latest",
     "usesStandbyMode": true,
@@ -8,5 +9,6 @@
         "dataset": "./dataset_schema.json"
     },
     "input": "./input_schema.json",
+    "webServerMcpPath": "/mcp",
     "dockerfile": "./Dockerfile"
 }

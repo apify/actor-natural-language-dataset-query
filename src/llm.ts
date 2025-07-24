@@ -1,10 +1,10 @@
 import OpenAI from "openai";
 import type { ActorContext, QueryLLMResponse, TableShape } from "./types";
-import { TABLE_NAME } from "./const";
+import { APIFY_OPENAI_API_BASE_URL, TABLE_NAME } from "./const";
 import { log } from "apify";
 
 const client = new OpenAI({
-    baseURL: "https:/openrouter.apify.actor/api/v1",
+    baseURL: APIFY_OPENAI_API_BASE_URL,
     apiKey: "no-key-required-but-must-not-be-empty", // Any non-empty string works; do NOT use a real API key.
     defaultHeaders: {
         Authorization: `Bearer ${process.env.APIFY_TOKEN}`, // Apify token is loaded automatically in runtime
@@ -54,10 +54,12 @@ export async function queryLLM(input: {
 /**
  * Queries the LLM to identify important fields from a table schema relevant to a user query.
  *
- * @param {string} prompt - The user query for which important fields need to be identified.
- * @param {TableShape} tableShape - The schema of the table to be analyzed.
- * @param {ActorContext} actorContext - The context of the actor including name and description.
- * @returns {Promise<Record<string, string>>} - A promise that resolves to a record where each key is a field name and the value is a short reason for its importance.
+ * @param {Object} args - The arguments object
+ * @param {string} args.prompt - The user query for which important fields need to be identified
+ * @param {TableShape} args.tableShape - The schema of the table to be analyzed
+ * @param {ActorContext} args.actorContext - The context of the actor including name and description
+ * @param {string} [args.model] - The model to use for the LLM query (optional)
+ * @returns {Promise<[string, string][]>} - A promise that resolves to an array of tuples where each tuple contains a field name and a short reason for its importance
  */
 export async function queryLLMImportantFields(args: {
     prompt: string;

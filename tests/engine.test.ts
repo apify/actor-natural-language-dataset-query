@@ -7,11 +7,11 @@ import type {
 } from "../src/types";
 import {
     convertTypeShapeToTableShape,
+    createDatabase,
     getSQLSchemaFromTableShape,
     initializeDatabase,
     populateDatabase,
 } from "../src/engine";
-import { createDatabase } from "../src/db";
 import { getDatasetTypeShape } from "../src/dataset";
 
 test("convert type shape to table shape", () => {
