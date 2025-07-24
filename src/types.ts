@@ -1,0 +1,27 @@
+export type ValueType =
+    | "string"
+    | "integer"
+    | "float"
+    | "boolean"
+    | "object"
+    | "unknown"
+    | "array";
+
+export type SqliteType = "TEXT" | "INTEGER" | "REAL";
+
+export type TypeShape = ValueType | { [key: string]: TypeShape };
+
+export type DatasetItem = Record<string, unknown>;
+
+export type TableShape = { [key: string]: SqliteType };
+
+export interface ActorContext {
+    name: string;
+    description: string;
+}
+
+export interface QueryLLMResponse {
+    text: string;
+    inputTokens: number;
+    outputTokens: number;
+}

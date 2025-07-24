@@ -1,0 +1,41 @@
+{
+    "title": "Tiny Dataset Query Engine",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "query": {
+            "title": "Query",
+            "type": "string",
+            "description": "Query for the LLM.",
+            "editor": "textfield",
+            "default": "What is the total number of pages containing the keyword 'apple'?"
+        },
+        "dataset": {
+            "title": "Dataset",
+            "type": "string",
+            "description": "ID of the dataset to query.",
+            "editor": "textfield"
+        },
+        "modelName": {
+            "title": "OpenAI model",
+            "type": "string",
+            "description": "The OpenAI model to use. Currently supported models are Gemini 2.5 Flash, Gemini 2.0 Flash, GPT-4.1, and GPT-4.1 Mini.",
+            "enum": [
+                "google/gemini-2.5-flash",
+                "google/gemini-2.0-flash-001",
+                "openai/gpt-4.1",
+                "openai/gpt-4.1-mini"
+            ],
+            "default": "google/gemini-2.5-flash",
+            "prefill": "google/gemini-2.5-flash"
+        },
+        "debug": {
+            "title": "Debug",
+            "type": "boolean",
+            "description": "If enabled, Actor provides detailed information with tool calls and reasoning.",
+            "editor": "checkbox",
+            "default": false
+        }
+    },
+    "required": ["query", "dataset"]
+}

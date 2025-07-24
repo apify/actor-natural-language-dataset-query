@@ -1,0 +1,32 @@
+{
+    "actorSpecification": 1,
+    "views": {
+        "overview": {
+            "title": "Overview",
+            "transformation": {
+                "fields": ["query", "sql", "response", "dataset"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "query": {
+                        "label": "Query",
+                        "format": "text"
+                    },
+                    "sql": {
+                        "label": "SQL",
+                        "format": "text"
+                    },
+                    "response": {
+                        "label": "Response",
+                        "format": "text"
+                    },
+                    "dataset": {
+                        "label": "Dataset",
+                        "format": "text"
+                    }
+                }
+            }
+        }
+    }
+}

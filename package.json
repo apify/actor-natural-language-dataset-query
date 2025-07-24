@@ -1,0 +1,21 @@
+{
+    "name": "tiny-query-engine",
+    "module": "src/index.ts",
+    "type": "module",
+    "private": true,
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4",
+        "@types/bun": "latest",
+        "@types/express": "^5.0.3"
+    },
+    "peerDependencies": {
+        "typescript": "^5"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.16.0",
+        "apify": "^3.3.2",
+        "express": "^5.1.0",
+        "openai": "^4.87.4",
+        "zod": "^3.24.2"
+    }
+}
