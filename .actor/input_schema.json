@@ -14,7 +14,7 @@
             "title": "Dataset",
             "type": "string",
             "description": "ID of the dataset to query.",
-            "editor": "textfield"
+            "resourceType": "dataset"
         },
         "modelName": {
             "title": "OpenAI model",
